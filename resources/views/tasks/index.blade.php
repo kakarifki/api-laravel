@@ -20,6 +20,33 @@
 
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
+                    <div class="mb-6 flex space-x-4">
+                        <div>
+                            <label for="status_filter" class="block text-sm font-medium text-gray-700">Filter by Status</label>
+                            <select id="status_filter" name="status" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" onchange="this.form.submit()">
+                                <option value="all" {{ request('status') == 'all' ? 'selected' : '' }}>All Tasks</option>
+                                <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                                <option value="in-progress" {{ request('status') == 'in-progress' ? 'selected' : '' }}>In Progress</option>
+                                <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Completed</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="sort_by" class="block text-sm font-medium text-gray-700">Sort By</label>
+                            <select id="sort_by" name="sort" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" onchange="this.form.submit()">
+                                <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Newest First</option>
+                                <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Oldest First</option>
+                                <option value="due_soon" {{ request('sort') == 'due_soon' ? 'selected' : '' }}>Due Soon</option>
+                            </select>
+                        </div>
+                    </div>
+                    <form method="GET" action="{{ route('tasks.index') }}" class="hidden">
+                        @if(request('status'))
+                            <input type="hidden" name="status" value="{{ request('status') }}">
+                        @endif
+                        @if(request('sort'))
+                            <input type="hidden" name="sort" value="{{ request('sort') }}">
+                        @endif
+                    </form>
                     @if ($tasks->isEmpty())
                         <p class="text-center text-gray-500">{{ __('No tasks found. Create your first task!') }}</p>
                     @else
@@ -37,7 +64,7 @@
                                     @foreach ($tasks as $task)
                                         <tr>
                                             <td class="px-6 py-4 whitespace-nowrap">
-                                                <div class="text-sm font-medium text-gray-900">
+                                                <div class="text-sm font-medium text-gray-900 @if($task->status == 'completed') line-through @endif">
                                                     <a href="{{ route('tasks.show', $task) }}" class="hover:underline">{{ $task->title }}</a>
                                                 </div>
                                             </td>

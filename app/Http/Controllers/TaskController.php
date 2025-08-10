@@ -21,9 +21,31 @@ class TaskController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): View
+    public function index(Request $request): View
     {
-        $tasks = Auth::user()->tasks()->orderBy('due_date', 'asc')->get();
+        $query = Auth::user()->tasks();
+
+        // Filter by status
+        if ($request->has('status') && $request->status !== 'all') {
+            $query->where('status', $request->status);
+        }
+
+        // Sort tasks
+        switch ($request->sort) {
+            case 'newest':
+                $query->orderBy('created_at', 'desc');
+                break;
+            case 'oldest':
+                $query->orderBy('created_at', 'asc');
+                break;
+            case 'due_soon':
+                $query->orderBy('due_date', 'asc');
+                break;
+            default:
+                $query->orderBy('created_at', 'desc');
+        }
+
+        $tasks = $query->get();
         return view('tasks.index', compact('tasks'));
     }
 
