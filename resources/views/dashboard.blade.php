@@ -83,8 +83,8 @@
                 <div class="p-6 text-gray-900">
                     <h3 class="text-lg font-medium text-gray-900 mb-4">{{ __('Upcoming Tasks') }}</h3>
                     
-                    @if ($upcomingTasks->isEmpty())
-                        <p class="text-gray-500">{{ __('No upcoming tasks.') }}</p>
+                    @if (empty($upcomingTasks) || (is_countable($upcomingTasks) && count($upcomingTasks) === 0))
+                        <p class="text-gray-500">{{ __('No tasks, please add one.') }}</p>
                     @else
                         <div class="space-y-4">
                             @foreach ($upcomingTasks as $task)
@@ -110,8 +110,11 @@
                             @endforeach
                         </div>
                         
-                        <div class="mt-6">
+                                                <div class="mt-6 flex justify-between items-center">
                             <a href="{{ route('tasks.index') }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-500">{{ __('View all tasks') }} &rarr;</a>
+                            <a href="{{ route('tasks.create') }}" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                                {{ __('Add New Task') }}
+                            </a>
                         </div>
                     @endif
                 </div>
