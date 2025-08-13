@@ -45,14 +45,18 @@ COPY --from=composer /app/vendor /var/www/html/vendor
 RUN npm install && npm run build
 
 
-# Set permissions...
+# Set permissions
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage
 
-# Tambahan baru: copy konfigurasi Apache dan aktifkan mod_rewrite
+# Tambahan: copy konfigurasi Apache dan aktifkan mod_rewrite
 COPY 000-default.conf /etc/apache2/sites-available/000-default.conf
 RUN a2enmod rewrite
 
+# Tambahan baru: copy skrip entrypoint dan jalankan saat container dimulai
+COPY entrypoint.sh .
+RUN chmod +x ./entrypoint.sh
+
 # Expose port 80 and start Apache
 EXPOSE 80
-CMD ["apache2-foreground"]
+CMD ["./entrypoint.sh"]
