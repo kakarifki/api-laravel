@@ -56,7 +56,6 @@
                             {{ __('Login or Register') }}
                         </x-dropdown-link>
                     @endauth
-                    </x-slot>
                 </x-dropdown>
             </div>
 
