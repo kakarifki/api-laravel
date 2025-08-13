@@ -19,9 +19,10 @@ RUN composer dump-autoload --optimize --no-dev
 # Stage 2: Production Image with Apache
 FROM php:8.2-apache
 
+# Set working directory
 WORKDIR /var/www/html
 
-# Install system dependencies
+# Install necessary system dependencies...
 RUN apt-get update && apt-get install -y \
     libpng-dev \
     libonig-dev \
@@ -32,18 +33,27 @@ RUN apt-get update && apt-get install -y \
     nodejs \
     npm \
     libpq-dev \
-    && docker-php-ext-install pdo pdo_pgsql mbstring exif pcntl bcmath gd \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+    && docker-php-ext-install pdo pdo_pgsql mbstring exif pcntl bcmath gd
 
-# Copy application files with vendor from the first stage
-COPY --from=composer /app .
+# Copy the entire application from the current directory
+COPY . .
 
-# Build frontend assets if you are using them (e.g., Vite)
+# Copy Composer dependencies from the build stage
+COPY --from=composer /app/vendor /var/www/html/vendor
+
+# Build frontend assets...
 RUN npm install && npm run build
 
-# Set correct permissions
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
-    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+# Generate application key...
+RUN php artisan key:generate
+
+# Set permissions...
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 /var/www/html/storage
+
+# Tambahan baru: copy konfigurasi Apache dan aktifkan mod_rewrite
+COPY 000-default.conf /etc/apache2/sites-available/000-default.conf
+RUN a2enmod rewrite
 
 # Expose port 80 and start Apache
 EXPOSE 80
