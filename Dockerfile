@@ -1,13 +1,13 @@
 # Stage 1: Build Image for dependencies
 FROM composer:2 AS composer
 
+# Set work directory
 WORKDIR /app
 
 # Copy only composer files
 COPY composer.json composer.lock ./
 
 # Install dependencies WITHOUT running any scripts
-# INI BAGIAN PENTING YANG DIUBAH
 RUN composer install --no-dev --no-scripts --no-autoloader
 
 # Copy the entire application to use its files
@@ -44,21 +44,23 @@ COPY --from=composer /app/vendor /var/www/html/vendor
 # Build frontend assets...
 RUN npm install && npm run build
 
+# Set permissions and fix storage directory ownership
+# This is a robust way to ensure permissions are correct
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 775 /var/www/html/storage \
+    && find /var/www/html/storage -type f -exec chmod 664 {} \; \
+    && find /var/www/html/storage -type d -exec chmod 775 {} \;
 
-# Set permissions
-RUN mkdir -p /var/www/html/storage/framework/{sessions,views,cache} \
-    && mkdir -p /var/www/html/storage/logs \
-    && chown -R www-data:www-data /var/www/html \
-    && chmod -R 775 /var/www/html/storage
-
-# Tambahan: copy konfigurasi Apache dan aktifkan mod_rewrite
+# Copy Apache config and enable mod_rewrite
 COPY 000-default.conf /etc/apache2/sites-available/000-default.conf
 RUN a2enmod rewrite
 
-# Tambahan baru: copy skrip entrypoint dan jalankan saat container dimulai
+# Copy entrypoint script and make it executable
 COPY entrypoint.sh .
 RUN chmod +x ./entrypoint.sh
 
-# Expose port 80 and start Apache
+# Expose port 80
 EXPOSE 80
-CMD bash -c "php artisan migrate --force && ./entrypoint.sh"
+
+# The CMD should only run the entrypoint script
+CMD ["./entrypoint.sh"]
