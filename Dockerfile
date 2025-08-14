@@ -44,18 +44,14 @@ COPY --from=composer /app/vendor /var/www/html/vendor
 # Build frontend assets...
 RUN npm install && npm run build
 
-# Set permissions and fix storage directory ownership
-# This is a robust way to ensure permissions are correct
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 775 /var/www/html/storage \
-    && find /var/www/html/storage -type f -exec chmod 664 {} \; \
-    && find /var/www/html/storage -type d -exec chmod 775 {} \;
+# BARIS INI DIHAPUS:
+# RUN php artisan key:generate
 
 # Copy Apache config and enable mod_rewrite
 COPY 000-default.conf /etc/apache2/sites-available/000-default.conf
 RUN a2enmod rewrite
 
-# Copy entrypoint script and make it executable
+# Tambahan baru: copy skrip entrypoint dan jalankan saat container dimulai
 COPY entrypoint.sh .
 RUN chmod +x ./entrypoint.sh
 
