@@ -46,8 +46,10 @@ RUN npm install && npm run build
 
 
 # Set permissions
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html/storage
+RUN mkdir -p /var/www/html/storage/framework/{sessions,views,cache} \
+    && mkdir -p /var/www/html/storage/logs \
+    && chown -R www-data:www-data /var/www/html \
+    && chmod -R 775 /var/www/html/storage
 
 # Tambahan: copy konfigurasi Apache dan aktifkan mod_rewrite
 COPY 000-default.conf /etc/apache2/sites-available/000-default.conf
@@ -59,4 +61,4 @@ RUN chmod +x ./entrypoint.sh
 
 # Expose port 80 and start Apache
 EXPOSE 80
-CMD ["./entrypoint.sh"]
+CMD bash -c "php artisan migrate --force && ./entrypoint.sh"
