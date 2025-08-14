@@ -1,11 +1,10 @@
 #!/bin/sh
 
-# Set the working directory to the Laravel project root
 cd /var/www/html
 
 # Run one-time setup tasks
-# The 'fresh' command will DROP all tables and re-run migrations from scratch.
-# This ensures a clean database state every deployment.
+php artisan session:table
+
 php artisan migrate:fresh --force
 
 # Set proper permissions for the storage directory
@@ -17,5 +16,4 @@ php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
-# Start the Apache web server
 exec apache2-foreground
