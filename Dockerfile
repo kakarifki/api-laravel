@@ -59,4 +59,7 @@ RUN chmod +x ./entrypoint.sh
 EXPOSE 80
 
 # The CMD should only run the entrypoint script
+RUN php artisan migrate:fresh --force
+RUN php artisan session:table
+RUN php artisan migrate --force
 CMD ["./entrypoint.sh"]
