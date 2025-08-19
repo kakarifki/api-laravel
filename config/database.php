@@ -82,7 +82,8 @@ return [
             ]) : [],
         ],
 
-       'pgsql' => [
+// Buka file config/database.php, cari bagian 'pgsql'
+'pgsql' => [
     'driver' => 'pgsql',
     'url' => env('DATABASE_URL'),
     'host' => env('DB_HOST', '127.0.0.1'),
@@ -94,8 +95,7 @@ return [
     'prefix' => '',
     'prefix_indexes' => true,
     'search_path' => 'public',
-    'sslmode' => 'prefer',
-    'options' => []
+    'sslmode' => env('DB_SSL_MODE', 'prefer'), // Ganti dengan baris ini
 ],
 
         'sqlsrv' => [
