@@ -6,6 +6,13 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+   /**
+     * Indicates if the migration should be run within a transaction.
+     *
+     * @var bool
+     */
+    public $withinTransaction = false; // Tambahkan baris ini
+    
     /**
      * Run the migrations.
      */
