@@ -2,7 +2,9 @@
 
 # Task Management Application
 
-A simple yet powerful task management application built with Laravel that helps users organize their daily tasks efficiently.
+A simple yet powerful task management application built with Laravel that helps users organize their daily tasks efficiently.  
+You can access the application at [https://tasklist-laravel.onrender.com/](https://tasklist-laravel.onrender.com/).  
+The application is hosted on Render, a cloud platform that provides easy deployment and scaling of applications.
 
 ## Features
 
@@ -28,7 +30,4 @@ A simple yet powerful task management application built with Laravel that helps 
 4. Run database migrations with `php artisan migrate`
 5. Start the development server with `php artisan serve`
 
-## Screenshots
-
-*Add screenshots of your application here*
 
